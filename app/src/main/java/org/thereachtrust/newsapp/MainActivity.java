@@ -1,76 +1,127 @@
 package org.thereachtrust.newsapp;
 
-import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import com.google.android.material.button.MaterialButton;
 
-import org.thereachtrust.newsapp.databinding.ActivityMainBinding;
-
-import android.view.Menu;
-import android.view.MenuItem;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
+    private OnboadingAdapter onboadingAdapter;
+    private LinearLayout layoutOnboardingIndicators;
+    private MaterialButton buttonAction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        layoutOnboardingIndicators= findViewById(R.id.layoutOnboardingIndicators);
+        buttonAction= findViewById(R.id.buttonAction);
 
-        setSupportActionBar(binding.toolbar);
+        setupOnboardingItems();
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        ViewPager2 onboardindViewPager= findViewById(R.id.onboardingViewPager);
+        onboardindViewPager.setAdapter(onboadingAdapter);
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
+        setupOnboardingIndicators();
+        setCurrentOnboardingIndicator(0);
+
+        onboardindViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                setCurrentOnboardingIndicator(position);
             }
         });
+
+        buttonAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                finish();
+
+            }
+        });
+
     }
+    private void setupOnboardingItems(){
+        List<OnboardingItem> onboardingItems= new ArrayList<>();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        OnboardingItem itemNewsOnline= new OnboardingItem();
+        itemNewsOnline.setTitle("Get Your News Online");
+        itemNewsOnline.setDescription("Get the world wide news from  your phone by just a click..." +
+                "This app allow you to stay up to date with the latest news and features you want...");
+        itemNewsOnline.setImage(R.drawable.img3);
+
+        OnboardingItem itemNewsPaper= new OnboardingItem();
+        itemNewsPaper.setTitle("News Paper");
+        itemNewsPaper.setDescription("Get updated without moving from your confort zone" +
+                "we provide up to date news with the latest versions and features you desire");
+        itemNewsPaper.setImage(R.drawable.img2);
+
+        OnboardingItem itemNewsWorld= new OnboardingItem();
+        itemNewsWorld.setTitle("Global News");
+        itemNewsWorld.setDescription("Let get start with our news word by clicking on the button, news.com!");
+        itemNewsWorld.setImage(R.drawable.img1);
+
+        onboardingItems.add(itemNewsOnline);
+        onboardingItems.add(itemNewsPaper);
+        onboardingItems.add(itemNewsWorld);
+
+        onboadingAdapter= new OnboadingAdapter(onboardingItems);
     }
+    private void setupOnboardingIndicators(){
+        ImageView[] indicators= new ImageView[onboadingAdapter.getItemCount()];
+        LinearLayout.LayoutParams layoutParams= new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        layoutParams.setMargins(8,0,8,0);
+        for(int i=0;i<indicators.length;i++){
+            indicators[i]= new ImageView(getApplicationContext());
+            indicators[i].setImageDrawable(ContextCompat.getDrawable(
+                    getApplicationContext(),
+                    R.drawable.onboarding_indicator_inactive
+            ));
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            indicators[i].setLayoutParams(layoutParams);
+            layoutOnboardingIndicators.addView(indicators[i]);
         }
-
-        return super.onOptionsItemSelected(item);
     }
+    @SuppressLint("SetTextI18n")
+    private void setCurrentOnboardingIndicator(int index){
+        int childCount= layoutOnboardingIndicators.getChildCount();
+        for(int i=0; i<childCount; i++){
+            ImageView imageView= (ImageView) layoutOnboardingIndicators.getChildAt(i);
+            if(i==index){
+                imageView.setImageDrawable(
+                        ContextCompat.getDrawable(getApplicationContext(),
+                                R.drawable.onboarding_indicator_active)
+                );
+            }
+            else{
+                imageView.setImageDrawable(
+                        ContextCompat.getDrawable(getApplicationContext(),
+                                R.drawable.onboarding_indicator_inactive)
+                );
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
+
+            }
+        }
+        buttonAction.setText("Skip");
+
     }
 }
