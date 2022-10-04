@@ -103,7 +103,7 @@
         android:drawableLeft="@drawable/ic_email"
         android:drawablePadding="15dp"
         android:ems="10"
-        android:hint="Email"
+        android:hint="Email@gmail.com"
         android:inputType="textPersonName"
         android:textColorHint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
