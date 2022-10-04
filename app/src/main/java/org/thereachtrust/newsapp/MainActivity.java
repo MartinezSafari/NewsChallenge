@@ -47,14 +47,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        buttonAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        buttonAction.setOnClickListener(view -> {
 
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                finish();
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+            finish();
 
-            }
         });
 
     }

@@ -42,15 +42,12 @@ public class NewsActivity extends AppCompatActivity {
         titles= new ArrayList<String>();
         links= new ArrayList<String>();
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        listView.setOnItemClickListener((parent, view, position, id) -> {
 
-                Uri uri= Uri.parse(links.get(position));
-                Intent intent= new Intent(Intent.ACTION_VIEW,uri);
-                startActivity(intent);
+            Uri uri= Uri.parse(links.get(position));
+            Intent intent= new Intent(Intent.ACTION_VIEW,uri);
+            startActivity(intent);
 
-            }
         });
 
         new ProcessinBackground().execute();

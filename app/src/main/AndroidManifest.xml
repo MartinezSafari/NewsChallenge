@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.thereachtrust.newsapp">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -22,14 +24,16 @@
         </activity>
         <activity
             android:name=".OnboardingItem"
-            android:exported="false">
+            android:exported="false"
+            tools:ignore="Instantiatable">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".OnboadingAdapter"
-            android:exported="false">
+            android:exported="false"
+            tools:ignore="Instantiatable">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
