@@ -1,52 +1,61 @@
 package org.thereachtrust.newsapp;
 
 public class NewsItem {
-    private String titles;
-    private String descr;
-    private String links;
+    private String title;
+    private String desc;
+    private String link;
+    private String date;
 
-
-    public NewsItem(String titles, String descr, String links) {
-        this.titles = titles;
-        this.descr = descr;
-        this.links = links;
+    public NewsItem(String title, String desc, String link, String date) {
+        this.title = title;
+        this.desc = desc;
+        this.link = link;
+        this.date = date;
 
     }
 
     public NewsItem() {
     }
 
-    public String getTitles() {
-        return titles;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTitles(String titles) {
-        this.titles = titles;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getDescr() {
-        return descr;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setDescr(String descr) {
-        this.descr = descr;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
-    public String getLinks() {
-        return links;
+    public String getLink() {
+        return link;
     }
 
-    public void setLinks(String links) {
-        this.links = links;
+    public void setLink(String link) {
+        this.link = link;
     }
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     @Override
     public String toString() {
         return "NewsItem{" +
-                "titles='" + titles + '\'' +
-                ", descr='" + descr + '\'' +
-                ", links='" + links + '\'' +
+                "title='" + title + '\'' +
+                ", desc='" + desc + '\'' +
+                ", link='" + link + '\'' +
+                ", date='" + date + '\'' +
                 '}';
     }
 }
