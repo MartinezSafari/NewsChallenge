@@ -15,6 +15,8 @@ import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.newschallenge.R;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -74,11 +76,12 @@ public class NewsActivity extends AppCompatActivity {
             progressDialog.show();
         }
 
+        //Incomplete
         @Override
         protected Exception doInBackground(Integer... params) {
             try {
-                //retrive data from the Xml document
-                URL url= new URL("feeds.bbci.co.uk/news/world/asia/rss.xml");
+                //retrieve data from the Xml document
+                URL url= new URL("https://feeds.24.com/articles/news24/Africa/rss");
 
                 XmlPullParserFactory factory= XmlPullParserFactory.newInstance();
 
