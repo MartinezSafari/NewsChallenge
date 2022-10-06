@@ -32,6 +32,8 @@ public class NewsActivity extends AppCompatActivity {
     ListView listView;
     ArrayList<String> titles;
     ArrayList<String> links;
+    ArrayList<String> descr;
+
 
 
     @Override
@@ -43,6 +45,7 @@ public class NewsActivity extends AppCompatActivity {
 
         titles= new ArrayList<String>();
         links= new ArrayList<String>();
+        descr= new ArrayList<String>();
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
 
@@ -108,6 +111,11 @@ public class NewsActivity extends AppCompatActivity {
                         else if(xpp.getName().equalsIgnoreCase("link")){
                             if(insideItem){
                                 links.add(xpp.nextText());
+                            }
+                        }
+                        else if(xpp.getName().equalsIgnoreCase("decription")){
+                            if(insideItem){
+                                descr.add(xpp.nextText());
                             }
                         }
                     }
