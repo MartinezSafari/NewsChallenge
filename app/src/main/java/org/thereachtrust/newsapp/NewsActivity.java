@@ -2,18 +2,23 @@ package org.thereachtrust.newsapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.Xml;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newschallenge.R;
 
@@ -23,138 +28,194 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
 public class NewsActivity extends AppCompatActivity {
 
-    ListView listView;
-    ArrayList<String> titles;
-    ArrayList<String> links;
-    ArrayList<String> descr;
+    private static final String TAG= "NewsActivity";
 
+    private ArrayList<NewsItem> news;
 
+    private RecyclerView recyclerView;
+    private RecyclerViewAdapter adapter;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news);
+        setContentView(R.layout.activity_main);
+        recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
+        adapter= new RecyclerViewAdapter(this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        listView= (ListView) findViewById(R.id.listView);
+        ////////
+        news = new ArrayList<>();
 
-        titles= new ArrayList<String>();
-        links= new ArrayList<String>();
-        descr= new ArrayList<String>();
+        GetDataAsyncTask getDataAsyncTask= new GetDataAsyncTask();
+        getDataAsyncTask.execute();
 
-        listView.setOnItemClickListener((parent, view, position, id) -> {
-
-            Uri uri= Uri.parse(links.get(position));
-            Intent intent= new Intent(Intent.ACTION_VIEW,uri);
-            startActivity(intent);
-
-        });
-
-        new ProcessinBackground().execute();
     }
-    public InputStream getInputStream(URL url){
-        try {
-            return url.openConnection().getInputStream();
-        }
-        catch ( IOException e){
-            return null;
-
-        }
-    }
-    public class ProcessinBackground extends AsyncTask<Integer, Void, Exception>{
-
-        ProgressDialog progressDialog= new ProgressDialog(NewsActivity.this);
-
-        Exception exception=null;
+    private class GetDataAsyncTask extends AsyncTask<Void, Void, Void>{
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog.setMessage("Loading...");
-            progressDialog.show();
-        }
-
-        //Incomplete
-        @Override
-        protected Exception doInBackground(Integer... params) {
+        protected Void doInBackground(Void... voids) {
+            InputStream inputStream= getInputStream();
             try {
-                //retrieve data from the Xml document
-                URL url= new URL("https://feeds.24.com/articles/news24/Africa/rss");
+                initXMLPullParser (inputStream);
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
 
-                XmlPullParserFactory factory= XmlPullParserFactory.newInstance();
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            adapter.setNews(news);
+            super.onPostExecute(aVoid);
+        }
+    }
+    private void initXMLPullParser(InputStream inputStream) throws XmlPullParserException, IOException {
+        Log.d(TAG,"initXMLPullParser: called");
+        XmlPullParser parser= Xml.newPullParser();
+        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES,false);
+        parser.setInput(inputStream, null);
+        parser.nextTag();
+        parser.require(XmlPullParser.START_TAG, null, "rss");
 
-                factory.setNamespaceAware(false);
+        while(parser.next()!= XmlPullParser.END_TAG){
+            if(parser.getEventType() !=XmlPullParser.START_TAG){
+                continue;
+            }
 
-                //Extract data from the Xml document
-                XmlPullParser xpp= factory.newPullParser();
-
-                xpp.setInput(getInputStream(url),"UTF_8");
-
-                boolean insideItem= false;
-                int eventType= xpp.getEventType();
-
-                while (eventType !=XmlPullParser.END_DOCUMENT){
-                    if(eventType == XmlPullParser.START_TAG){
-                        if(xpp.getName().equalsIgnoreCase("item")){
-                            insideItem= true;
-                        }
-                        else if(xpp.getName().equalsIgnoreCase("title")){
-                            if(insideItem){
-                                titles.add(xpp.nextText());
-                            }
-                        }
-                        else if(xpp.getName().equalsIgnoreCase("link")){
-                            if(insideItem){
-                                links.add(xpp.nextText());
-                            }
-                        }
-                        else if(xpp.getName().equalsIgnoreCase("decription")){
-                            if(insideItem){
-                                descr.add(xpp.nextText());
-                            }
-                        }
-                    }
-                    else if(eventType == XmlPullParser.END_TAG && xpp.getName()
-                            .equalsIgnoreCase("item")){
-                        insideItem= false;
-                    }
-                    eventType= xpp.next();
+            parser.require(XmlPullParser.START_TAG, null, "channel");
+            while (parser.next()!= XmlPullParser.END_TAG){
+                if(parser.getEventType()!= XmlPullParser.START_TAG){
+                    continue;
                 }
 
+                if(parser.getName().equals("item")){
+                    parser.require(XmlPullParser.START_TAG, null,"item");
 
-            }
-            catch (MalformedURLException e){
-                exception=e;
-                e.printStackTrace();
+                    String title="";
+                    String desc="";
+                    String link="";
+                    String date="";
 
-            }
-            catch (XmlPullParserException e){
-                exception=e;
-                e.printStackTrace();
-            }
-            catch (IOException e){
-                exception=e;
-                e.printStackTrace();
-            }
 
-            return exception;
+                    while(parser.next()!= XmlPullParser.END_TAG){
+                        if(parser.getEventType()!=XmlPullParser.START_TAG){
+                            continue;
+                        }
+                        String tagName= parser.getName();
+                        if(tagName.equals("title")){
+                            //get title
+                            title= getContent(parser, "title");
+                        }
+                        else if(tagName.equals("description")){
+                            //get desc
+                            desc= getContent(parser, "description");
+                        }
+                        else if(tagName.equals("link")){
+                            //get link
+                            link= getContent(parser, "link");
+                        }
+                        else if(tagName.equals("pubDate")){
+                            //get date
+                            date= getContent(parser, "pubDate");
+                        }
+                        else{
+                            //skip tag
+                            skipTag(parser);
+                        }
+
+                    }
+
+                    NewsItem item= new NewsItem(title, desc, link, date);
+                    news.add(item);
+                }
+                else{
+                    //skip tag
+                    skipTag(parser);
+                }
+            }
         }
 
-        @Override
-        protected void onPostExecute(Exception s) {
-            super.onPostExecute(s);
 
-            ArrayAdapter<String> adapter= new ArrayAdapter<String>
-                    (NewsActivity.this, android.R.layout.simple_list_item_1, titles);
+    }
 
-            listView.setAdapter(adapter);
+    private void skipTag(XmlPullParser parser) throws XmlPullParserException, IOException {
+        Log.d(TAG, "skipTag: skipping: "+parser.getName());
+        if(parser.getEventType()!=XmlPullParser.START_TAG){
+            throw new IllegalStateException();
 
-            progressDialog.dismiss();
+        }
+        int number=1;
+        while (number !=0){
+            switch (parser.next()){
+                case XmlPullParser.START_TAG:
+                    number++;
+                    break;
+
+                case XmlPullParser.END_TAG:
+                    number--;
+                    break;
+
+                default:
+                    break;
+
+            }
         }
     }
+
+    private String getContent (XmlPullParser parser, String tagName){
+        Log.d(TAG, "getContent: started for tag: "+ tagName);
+        try {
+            parser.require(XmlPullParser.START_TAG,null,tagName);
+
+            String content="";
+
+            if (parser.next()== XmlPullParser.TEXT){
+                content= parser.getText();
+                parser.next();
+            }
+
+            return content;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private InputStream getInputStream(){
+        Log.d(TAG, "getInputStream: started");
+        try{
+            //URL url= new URL("https://www.autosport.com/rss/feed/f1");//test&work
+            //URL url= new URL("https://www.bbc.com/news/world/africa");//not displaying
+
+            URL url= new URL("https://feeds.24.com/articles/news24/Africa/rss");// test&work
+
+
+
+            HttpURLConnection connection= (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setDoInput(true);
+            connection.connect();
+            return connection.getInputStream();
+
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
