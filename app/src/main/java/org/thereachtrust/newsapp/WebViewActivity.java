@@ -8,7 +8,7 @@ import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.newschallenge.R;
+
 
 public class WebViewActivity extends AppCompatActivity {
 
