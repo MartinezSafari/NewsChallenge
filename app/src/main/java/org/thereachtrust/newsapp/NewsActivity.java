@@ -39,7 +39,6 @@ public class NewsActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        ////////
         news = new ArrayList<>();
 
         GetDataAsyncTask getDataAsyncTask= new GetDataAsyncTask();
