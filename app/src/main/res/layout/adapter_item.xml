@@ -8,39 +8,45 @@
     app:cardCornerRadius="20dp"
     app:cardElevation="10dp">
 
+    <ImageView
+        android:id="@+id/logo"
+        android:src="@drawable/img1"
+        android:layout_width="100dp"
+        android:layout_height="100dp"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
 
         <TextView
             android:id="@+id/txtTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="110dp"
             android:layout_marginTop="5dp"
             android:text="Title"
             android:textSize="20sp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/txtDesc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="65dp"
-            android:text="Description"
-            android:textSize="20sp" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="140dp"
+            android:layout_marginLeft="110dp"
+            android:layout_marginTop="65dp"
             android:text="Date"
             android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/txtDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="110dp"
+            android:layout_marginTop="140dp"
+            android:text="Description"
+            android:textSize="20sp" />
+
 
     </RelativeLayout>
 

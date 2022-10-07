@@ -7,9 +7,14 @@ import android.os.Bundle;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Xml;
+import android.view.View;
+import android.widget.Button;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
+import com.google.android.material.button.MaterialButton;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -29,11 +34,15 @@ public class NewsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
 
+    private MaterialButton buttonAction;
+
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
+
         recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
         adapter= new RecyclerViewAdapter(this);
         recyclerView.setAdapter(adapter);
@@ -44,7 +53,21 @@ public class NewsActivity extends AppCompatActivity {
         GetDataAsyncTask getDataAsyncTask= new GetDataAsyncTask();
         getDataAsyncTask.execute();
 
+
+        buttonAction= findViewById(R.id.buttonAction);
+        buttonAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                moveTaskToBack(true);
+                android.os.Process.killProcess(android.os.Process.myPid());
+                System.exit(1);
+            }
+        });
+
     }
+
+
+
     private class GetDataAsyncTask extends AsyncTask<Void, Void, Void>{
 
         @Override
@@ -202,6 +225,8 @@ public class NewsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return null;
+
     }
+
 
 }
