@@ -7,11 +7,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>{
@@ -44,6 +48,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         viewHolder.txtTitle.setText(news.get(i).getTitle());
         viewHolder.txtDesc.setText(news.get(i).getDesc());
         viewHolder.txtDate.setText(news.get(i).getDate());
+        Glide.with(context).load(news.get(i).getEnclosure()).into(viewHolder.txtEnclosure);
 
         viewHolder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,6 +71,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         private TextView txtDate, txtDesc, txtTitle;
+        public ImageView txtEnclosure;
         private CardView parent;
 
         public ViewHolder(@NonNull View itemView) {
@@ -74,6 +80,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             txtDate= (TextView) itemView.findViewById(R.id.txtDate);
             txtDesc= (TextView) itemView.findViewById(R.id.txtDesc);
             txtTitle= (TextView) itemView.findViewById(R.id.txtTitle);
+            txtEnclosure= (ImageView) itemView.findViewById(R.id.imageEnclosure);
 
             parent= (CardView) itemView.findViewById(R.id.parent);
         }

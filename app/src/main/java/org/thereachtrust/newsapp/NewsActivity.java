@@ -115,6 +115,7 @@ public class NewsActivity extends AppCompatActivity {
                     String desc="";
                     String link="";
                     String date="";
+                    String enclosure="";
 
 
                     while(parser.next()!= XmlPullParser.END_TAG){
@@ -138,6 +139,14 @@ public class NewsActivity extends AppCompatActivity {
                             //get date
                             date= getContent(parser, "pubDate");
                         }
+                        else if(tagName.equals("enclosure")){
+                            //get image
+                            enclosure= getContent(parser, "enclosure");
+
+                            // Glide.with(this).load(enclosure.indexOf("url")).into(imageView);
+                            //String imageUrl= enclosure.substring(enclosure.indexOf("url")+5, enclosure.indexOf("jpeg")+3);
+                            //imageUrl= getContent(parser, imageUrl);
+                        }
                         else{
                             //skip tag
                             skipTag(parser);
@@ -145,7 +154,7 @@ public class NewsActivity extends AppCompatActivity {
 
                     }
 
-                    NewsItem item= new NewsItem(title, desc, link, date);
+                    NewsItem item= new NewsItem(title, desc, link, date, enclosure);
                     news.add(item);
                 }
                 else{

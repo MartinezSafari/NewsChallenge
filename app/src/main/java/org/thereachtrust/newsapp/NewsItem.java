@@ -5,12 +5,14 @@ public class NewsItem {
     private String desc;
     private String link;
     private String date;
+    private String enclosure;
 
-    public NewsItem(String title, String desc, String link, String date) {
+    public NewsItem(String title, String desc, String link, String date, String enclosure) {
         this.title = title;
         this.desc = desc;
         this.link = link;
         this.date = date;
+        this.enclosure = enclosure ;
 
     }
 
@@ -49,6 +51,14 @@ public class NewsItem {
         this.date = date;
     }
 
+    public String getEnclosure() {
+        return enclosure;
+    }
+
+    public void setEnclosure(String enclosure) {
+        this.enclosure = enclosure;
+    }
+
     @Override
     public String toString() {
         return "NewsItem{" +
@@ -56,6 +66,7 @@ public class NewsItem {
                 ", desc='" + desc + '\'' +
                 ", link='" + link + '\'' +
                 ", date='" + date + '\'' +
+                ", enclosure='" + enclosure + '\'' +
                 '}';
     }
 }
